@@ -1,23 +1,19 @@
 require('dotenv').config();
-
-const sendMailRoute = require('./routes/sendMailRoute.js')
-
-
 const express = require('express');
 const app = express();
 
-const notFoundMiddleware = require('./middleware/not-found');
+
+const sendMailRoute = require('./routes/sendMailRoute')
+const notFoundMiddleware = require('./middleware/notFound');
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// routes
+app.use('/api', sendMailRoute)
 
 // middleware
 app.use(notFoundMiddleware);
-
-// routes
-app.get('/', (req, res) => {
-  res.send('<h1>Email API </h1>');
-});
-app.use('/api/mail/v1', sendMailRoute)
 
 
 const port = process.env.PORT || 3000;
