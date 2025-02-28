@@ -22,11 +22,14 @@ const notFound_1 = __importDefault(require("./middleware/notFound"));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 const corsOptions = {
-    origin: 'http://localhost:3001/index.html',
+    origin: process.env.CORS_ORIGIN,
     optionsSuccessStatus: 200,
 };
 app.use((0, cors_1.default)(corsOptions));
 app.use('/api', sendMailRoute_1.default);
+app.get('/', (req, res) => {
+    res.send('Server is running...');
+});
 app.use(notFound_1.default);
 const port = process.env.PORT || 3000;
 const start = () => __awaiter(void 0, void 0, void 0, function* () {

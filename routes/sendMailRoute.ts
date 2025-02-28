@@ -1,5 +1,5 @@
 import express from 'express';
-import SendMail from '../controllers/sendMail';
+import { SendMail } from '../controllers/sendMail';
 
 const router = express.Router();
 

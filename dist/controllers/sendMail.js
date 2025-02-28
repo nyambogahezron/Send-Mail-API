@@ -1,13 +1,26 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = SendMail;
+exports.SendMail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const mailgen_1 = __importDefault(require("mailgen"));
-function SendMail(req, res) {
+const AsyncHandler_1 = require("../middleware/AsyncHandler");
+exports.SendMail = (0, AsyncHandler_1.AsyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, emailSubject, userMsg } = req.body;
+    if (!name || !email || !emailSubject || !userMsg) {
+        return res.status(400).json({ msg: 'All fields are required' });
+    }
     let config = {
         service: 'gmail',
         auth: {
@@ -36,17 +49,13 @@ function SendMail(req, res) {
         to: 'hezronnyamboga6@gmail.com',
         subject: emailSubject,
         html: mailBody,
+        inReplyTo: undefined,
+        references: undefined,
     };
-    transporter
-        .sendMail(message)
-        .then(() => {
-        res.status(201).json({
-            msg: 'Email send Successful',
-            email: email,
-        });
-    })
-        .catch((error) => {
-        res.status(500).json({ error });
-    });
-}
+    const sendMail = yield transporter.sendMail(message);
+    if (!sendMail) {
+        return res.status(500).json({ msg: 'Failed to send email' });
+    }
+    return res.status(200).json({ msg: 'Email sent successfully' });
+}));
 //# sourceMappingURL=sendMail.js.map

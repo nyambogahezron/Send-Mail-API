@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const sendMail_1 = __importDefault(require("../controllers/sendMail"));
+const sendMail_1 = require("../controllers/sendMail");
 const router = express_1.default.Router();
-router.post('/sendmail', sendMail_1.default);
+router.post('/sendmail', sendMail_1.SendMail);
 exports.default = router;
 //# sourceMappingURL=sendMailRoute.js.map

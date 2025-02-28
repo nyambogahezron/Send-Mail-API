@@ -1,9 +1,14 @@
 import nodemailer from 'nodemailer';
 import Mailgen from 'mailgen';
 import { Request, Response } from 'express';
+import { AsyncHandler } from '../middleware/AsyncHandler';
 
-export default function SendMail(req: Request, res: Response) {
+export const SendMail = AsyncHandler(async (req: Request, res: Response) => {
 	const { name, email, emailSubject, userMsg } = req.body;
+
+	if (!name || !email || !emailSubject || !userMsg) {
+		return res.status(400).json({ msg: 'All fields are required' });
+	}
 
 	let config = {
 		service: 'gmail',
@@ -38,17 +43,15 @@ export default function SendMail(req: Request, res: Response) {
 		to: 'hezronnyamboga6@gmail.com',
 		subject: emailSubject,
 		html: mailBody,
+		inReplyTo: undefined,
+		references: undefined,
 	};
 
-	transporter
-		.sendMail(message)
-		.then(() => {
-			res.status(201).json({
-				msg: 'Email send Successful',
-				email: email,
-			});
-		})
-		.catch((error) => {
-			res.status(500).json({ error });
-		});
-}
+	const sendMail = await transporter.sendMail(message);
+
+	if (!sendMail) {
+		return res.status(500).json({ msg: 'Failed to send email' });
+	}
+
+	return res.status(200).json({ msg: 'Email sent successfully' });
+});

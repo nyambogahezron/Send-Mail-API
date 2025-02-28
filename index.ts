@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const corsOptions = {
-	origin: 'http://localhost:3001/index.html',
+	origin: process.env.CORS_ORIGIN,
 	optionsSuccessStatus: 200,
 };
 
@@ -22,6 +22,10 @@ app.use(cors(corsOptions));
 
 // routes
 app.use('/api', sendMailRoute);
+
+app.get('/', (req, res) => {
+	res.send('Server is running...');
+});
 
 // middleware
 app.use(notFoundMiddleware);
